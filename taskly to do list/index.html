@@ -1,0 +1,179 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Taskly — My Tasks</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Manrope:wght@500;600;700;800&display=swap');
+:root{--bg:#f5f6fb;--paper:#fff;--ink:#191a24;--muted:#898b9b;--line:#ececf3;--purple:#6857e8;--purple-light:#efedff;--green:#22a06b;--shadow:0 18px 55px #25234a12}
+*{box-sizing:border-box}body{margin:0;background:radial-gradient(circle at 10% 0,#eeebff,transparent 30%),radial-gradient(circle at 95% 100%,#e8f8f2,transparent 28%),var(--bg);font-family:'DM Sans',sans-serif;color:var(--ink);min-height:100vh;padding:22px;display:grid;place-items:center}button,input{font:inherit}button{cursor:pointer}
+.app{width:min(1100px,100%);min-height:min(740px,calc(100vh - 44px));display:grid;grid-template-columns:245px 1fr;background:var(--paper);border-radius:25px;overflow:hidden;box-shadow:var(--shadow);border:1px solid #ffffff}
+aside{background:#fafaff;border-right:1px solid var(--line);padding:25px 17px;display:flex;flex-direction:column}
+.brand{display:flex;align-items:center;gap:10px;font:800 21px Manrope,sans-serif;letter-spacing:-.7px;margin:2px 8px 34px}.brand-icon{width:34px;height:34px;border-radius:11px;background:linear-gradient(135deg,#7565f4,#9b8cff);display:grid;place-items:center;color:white;font-size:18px}
+.section-label{font-size:10px;font-weight:700;letter-spacing:1.5px;color:#a0a2b0;margin:0 10px 10px}.nav{width:100%;display:flex;gap:11px;align-items:center;padding:11px 12px;border:0;background:transparent;border-radius:11px;text-align:left;color:#777b8e;font-weight:600;font-size:12px;margin:2px 0}.nav:hover{background:#f1f0fb}.nav.active{background:var(--purple-light);color:var(--purple)}.nav-icon{font-size:16px;width:19px;text-align:center}.side-spacer{flex:1}.account{display:flex;align-items:center;gap:9px;border-top:1px solid var(--line);padding:15px 5px 0}.avatar{width:34px;height:34px;border-radius:11px;background:#e7e3ff;color:#6655db;display:grid;place-items:center;font-weight:800;flex-shrink:0}.account-info{min-width:0;flex:1}.account-info strong{display:block;font-size:11px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.account-info small{font-size:10px;color:var(--muted)}.logout{border:0;background:transparent;color:#999;padding:7px;border-radius:8px}.logout:hover{background:#fff0f2;color:#d14d62}
+main{padding:38px 46px;min-width:0}.header{display:flex;justify-content:space-between;align-items:center;gap:15px}.date-label{font-size:10px;color:var(--muted);font-weight:700;letter-spacing:1px}.header h1{font:800 30px Manrope,sans-serif;letter-spacing:-1.2px;margin:8px 0 5px}.subtitle{margin:0;color:var(--muted);font-size:12px}.focus-pill{white-space:nowrap;padding:9px 12px;border:1px solid var(--line);border-radius:11px;color:#777b8e;font-size:10px;font-weight:700}
+.progress{display:flex;align-items:center;gap:18px;background:linear-gradient(110deg,#6857e8,#8879ff);border-radius:17px;color:white;padding:18px 21px;margin:26px 0 24px}.progress-content{flex:1;min-width:0}.progress-title{font:700 14px Manrope,sans-serif}.progress-desc{font-size:11px;color:#e8e4ff;margin-top:4px}.track{height:5px;background:#ffffff45;border-radius:8px;margin-top:12px;overflow:hidden}.fill{height:100%;width:0;background:white;border-radius:8px;transition:width .2s}.percent{font:800 23px Manrope,sans-serif}
+.search-row{display:flex;gap:9px;margin-bottom:13px}.search{height:45px;flex:1;min-width:0;border:1px solid var(--line);border-radius:12px;padding:0 14px;background:#fcfcfe;outline:none;font-size:12px}.search:focus,.task-entry:focus{border-color:#a49aff;box-shadow:0 0 0 3px #7869ee15}.primary{border:0;border-radius:12px;background:var(--purple);color:#fff;font-size:12px;font-weight:700;padding:0 16px;box-shadow:0 6px 14px #6857e82b}.primary:hover{background:#5848d1}
+.add-form{display:flex;gap:9px;margin-bottom:22px}.add-form[hidden]{display:none}.task-entry{height:45px;flex:1;min-width:0;border:1px solid var(--line);border-radius:12px;padding:0 14px;outline:none;font-size:12px}.save-btn{height:45px}
+.list-head{display:flex;justify-content:space-between;align-items:center;gap:10px;margin:8px 0 12px}.list-head h2{font:800 15px Manrope,sans-serif;margin:0}.count{font:500 11px 'DM Sans';color:#a0a2b0}.filters{display:flex;gap:3px;background:#f5f5fa;padding:4px;border-radius:10px}.filter{border:0;background:transparent;color:#8a8d9c;font-size:10px;font-weight:700;padding:7px 9px;border-radius:7px}.filter.active{background:white;color:var(--purple);box-shadow:0 2px 7px #2221}
+.task-list{display:flex;flex-direction:column;gap:8px}.task{display:flex;align-items:center;gap:11px;border:1px solid var(--line);border-radius:12px;padding:12px;min-width:0}.task:hover{border-color:#d8d3ff;box-shadow:0 4px 13px #26215b09}.check{width:19px;height:19px;border:1.6px solid #c9cbd6;border-radius:6px;background:#fff;color:white;display:grid;place-items:center;flex-shrink:0;padding:0;font-size:12px}.task.done .check{background:var(--green);border-color:var(--green)}.task-title{flex:1;min-width:0;font-size:12px;overflow-wrap:anywhere}.task.done .task-title{text-decoration:line-through;color:#a5a7b2}.meta{display:flex;flex-direction:column;align-items:flex-end;gap:4px;max-width:180px}.meta span{font-size:9px;color:#999baa;white-space:nowrap}.meta .completed{color:var(--green)}.task-actions{display:flex;gap:2px;align-items:center}.icon-btn{border:0;background:transparent;color:#b0b2bf;padding:5px;border-radius:7px;font-size:15px}.icon-btn:hover{background:#f5f4fc}.icon-btn.pinned{color:#e2ae26}.icon-btn.delete:hover{background:#fff0f2;color:#d14d62}.empty{text-align:center;padding:45px 10px;color:#a0a2b0;font-size:12px}.empty-icon{font-size:27px;margin-bottom:9px}.hint{text-align:center;color:#b0b2bd;font-size:10px;margin-top:22px}
+.login{position:fixed;inset:0;z-index:5;display:grid;place-items:center;padding:20px;background:radial-gradient(circle at 15% 15%,#eeebff,transparent 32%),radial-gradient(circle at 85% 85%,#e6f8f1,transparent 30%),#f6f7fb}.login-card{width:min(420px,100%);background:white;border:1px solid white;border-radius:24px;padding:36px;box-shadow:0 25px 80px #26215b14}.login-card .brand{justify-content:center;margin:0 0 25px}.login-card h2{text-align:center;font:800 25px Manrope,sans-serif;letter-spacing:-.8px;margin:0 0 9px}.login-card p{text-align:center;color:var(--muted);font-size:12px;line-height:1.6;margin:0 0 25px}.login-card label{display:block;font-size:11px;font-weight:700;margin-bottom:8px}.email{width:100%;height:47px;border:1px solid var(--line);border-radius:11px;padding:0 13px;outline:none;font-size:12px}.email:focus{border-color:#a49aff;box-shadow:0 0 0 3px #7869ee15}.login-submit{height:47px;width:100%;margin-top:12px}.login-note{font-size:10px!important;color:#a0a2af!important;margin:17px 0 0!important}.hidden{display:none!important}
+.dialog-backdrop{position:fixed;inset:0;z-index:20;background:#17162966;display:grid;place-items:center;padding:20px;backdrop-filter:blur(4px)}
+.confirm-dialog{width:min(390px,100%);background:#fff;border-radius:20px;padding:25px;box-shadow:0 24px 80px #15132e33;animation:dialogIn .16s ease}
+.confirm-icon{width:44px;height:44px;border-radius:14px;background:#fff0f1;color:#d84d61;display:grid;place-items:center;margin-bottom:15px}
+.confirm-dialog h3{font:800 18px Manrope,sans-serif;margin:0 0 8px;letter-spacing:-.4px}
+.confirm-dialog p{font-size:12px;color:#85899a;line-height:1.55;margin:0 0 22px}
+.dialog-actions{display:flex;justify-content:flex-end;gap:8px}
+.dialog-btn{height:38px;padding:0 13px;border-radius:9px;font-size:12px;font-weight:600;display:inline-flex;align-items:center;justify-content:center;gap:7px;transition:background .15s,border-color .15s,color .15s}
+.dialog-btn svg{width:14px;height:14px;flex-shrink:0}
+.cancel-btn{border:1px solid #e6e7ee;background:#fff;color:#666a7b}.cancel-btn:hover{background:#f6f6fa;border-color:#d6d7e1;color:#343746}
+.confirm-delete{border:1px solid #d84d61;background:#d84d61;color:#fff}.confirm-delete:hover{background:#c43c50;border-color:#c43c50}
+@keyframes dialogIn{from{opacity:0;transform:translateY(5px) scale(.98)}to{opacity:1;transform:translateY(0) scale(1)}}
+@media(max-width:700px){aside{position:relative;min-height:76px;padding:17px;border-right:0;border-bottom:1px solid var(--line)}.account{position:absolute;top:19px;right:17px;margin:0;padding:0;border:0;z-index:40;gap:0}.side-spacer{display:none}body{padding:0;display:block}.app{width:100%;min-height:100vh;border-radius:0;grid-template-columns:1fr;grid-template-rows:auto 1fr}.brand{font-size:19px;margin:0}.side-nav-wrap{display:none}.account-info{display:none}.account .avatar{width:38px;height:38px;border:0;cursor:pointer;font-size:15px}.logout{display:none;position:absolute;right:0;top:46px;z-index:30;background:#fff;border:1px solid var(--line);box-shadow:0 8px 25px #25234a18;color:#555;padding:10px 13px;white-space:nowrap;font-size:12px;font-weight:600}.account.open .logout{display:flex;align-items:center;gap:8px}.logout-symbol{font-size:15px}.logout-label{display:inline}main{padding:25px 17px}.header h1{font-size:26px}.focus-pill{font-size:9px;padding:8px}.progress{margin:21px 0;padding:16px}.meta{max-width:125px}.meta span{font-size:8px}.task{gap:8px;padding:10px}.task-title{font-size:11px}.filters{gap:0}.filter{padding:7px 6px;font-size:9px}.primary{padding:0 12px}.login-card{padding:30px 24px}}
+</style>
+</head>
+<body>
+<div class="login" id="loginScreen">
+ <form class="login-card" id="loginForm">
+  <div class="brand"><span class="brand-icon">✓</span> taskly</div>
+  <h2>Your day, in control.</h2><p>Sign in with an email to keep your tasks organized.<br>No password or verification needed.</p>
+  <label for="email">Email address</label><input class="email" id="email" type="text" placeholder="you@example.com" autocomplete="email" required>
+  <button class="primary login-submit" type="submit">Continue →</button>
+  <p class="login-note">Demo login: any non-empty text works. Tasks are saved in this browser.</p>
+ </form>
+</div>
+<div class="app hidden" id="app">
+ <aside>
+  <div class="brand"><span class="brand-icon">✓</span> taskly</div>
+  <div class="side-nav-wrap">
+   <div class="section-label">WORKSPACE</div>
+   <button class="nav active" data-section="all"><span class="nav-icon">▦</span> All Tasks</button>
+   <button class="nav" data-section="pinned"><span class="nav-icon">☆</span> Important</button>
+   <button class="nav" data-section="today"><span class="nav-icon">◷</span> Added Today</button>
+  </div>
+  <div class="side-spacer"></div>
+  <div class="account" id="accountMenu"><button class="avatar" id="avatar" type="button" aria-label="Account menu" aria-expanded="false">U</button><div class="account-info"><strong id="userEmail">user@email.com</strong><small>Personal workspace</small></div><button class="logout" id="logout" title="Log out" aria-label="Log out"><span class="logout-symbol" aria-hidden="true">↪</span><span class="logout-label">Log out</span></button></div>
+ </aside>
+ <main>
+  <div class="header"><div><div class="date-label" id="todayLabel"></div><h1>Good to see you 👋</h1><p class="subtitle" id="dailyMessage">A little progress each day adds up.</p></div><div class="focus-pill">✦ Stay focused</div></div>
+  <section class="progress"><div class="progress-content"><div class="progress-title">Daily progress</div><div class="progress-desc" id="progressText">You're just getting started. Let's do this!</div><div class="track"><div class="fill" id="progressFill"></div></div></div><div class="percent" id="progressNum">0%</div></section>
+  <div class="search-row"><input class="search" id="searchInput" type="search" placeholder="⌕  Search tasks..." aria-label="Search tasks"><button class="primary" id="newTaskBtn" type="button">＋ New task</button></div>
+  <form class="add-form" id="taskForm" hidden><input class="task-entry" id="taskInput" type="text" placeholder="Write a task..." maxlength="180" required><button class="primary save-btn" type="submit">Save</button></form>
+  <div class="list-head"><h2 id="listTitle">My tasks <span class="count" id="taskCount">(0)</span></h2><div class="filters"><button class="filter active" data-filter="all">All</button><button class="filter" data-filter="active">Active</button><button class="filter" data-filter="done">Completed</button></div></div>
+  <div class="task-list" id="tasks"></div><div class="hint">Your tasks are saved separately for each email in this browser.</div>
+ </main>
+</div>
+<div class="dialog-backdrop hidden" id="deleteDialog" role="presentation">
+ <section class="confirm-dialog" role="alertdialog" aria-modal="true" aria-labelledby="deleteTitle" aria-describedby="deleteDescription">
+  <div class="confirm-icon"><svg viewBox="0 0 24 24" width="21" height="21" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 6h18"/><path d="M8 6V4h8v2"/><path d="m19 6-1 14H6L5 6"/><path d="M10 11v5M14 11v5"/></svg></div>
+  <h3 id="deleteTitle">Delete this task?</h3>
+  <p id="deleteDescription">This task will be permanently removed.</p>
+  <div class="dialog-actions"><button class="dialog-btn cancel-btn" id="cancelDelete" type="button"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18"/></svg>Cancel</button><button class="dialog-btn confirm-delete" id="confirmDelete" type="button"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 7h16M10 11v6m4-6v6M6 7l1 14h10l1-14M9 7V4h6v3"/></svg>Delete</button></div>
+ </section>
+</div>
+<script>
+'use strict';
+const $=id=>document.getElementById(id);
+let currentEmail='',tasks=[],filter='all',section='all',searchTerm='',pendingDeleteId=null;
+const key=email=>'taskly_v2_'+email.trim().toLowerCase();
+function safeLoad(email){try{const value=JSON.parse(localStorage.getItem(key(email))||'[]');return Array.isArray(value)?value:[]}catch{return[]}}
+function save(){if(!currentEmail)return;try{localStorage.setItem(key(currentEmail),JSON.stringify(tasks))}catch(e){alert('Could not save tasks in this browser.')}} 
+function dateTime(value){if(!value)return'';return new Intl.DateTimeFormat(undefined,{day:'2-digit',month:'short',year:'numeric',hour:'numeric',minute:'2-digit'}).format(new Date(value))}
+function enter(email){
+ currentEmail=email.trim().toLowerCase();if(!currentEmail)return;
+ try{localStorage.setItem('taskly_v2_current',currentEmail)}catch{}
+ tasks=safeLoad(currentEmail);filter='all';section='all';searchTerm='';
+ $('searchInput').value='';$('userEmail').textContent=currentEmail;$('avatar').textContent=(currentEmail[0]||'U').toUpperCase();
+ $('loginScreen').classList.add('hidden');$('app').classList.remove('hidden');setActiveNav();render();
+}
+function openDeleteDialog(id){pendingDeleteId=id;$('deleteDialog').classList.remove('hidden');$('cancelDelete').focus()}
+function closeDeleteDialog(){pendingDeleteId=null;$('deleteDialog').classList.add('hidden')}
+function confirmTaskDelete(){if(pendingDeleteId===null)return;tasks=tasks.filter(t=>t.id!==pendingDeleteId);save();closeDeleteDialog();render()}
+function logout(){try{localStorage.removeItem('taskly_v2_current')}catch{}currentEmail='';tasks=[];$('app').classList.add('hidden');$('loginScreen').classList.remove('hidden');$('email').value='';}
+function setActiveNav(){document.querySelectorAll('[data-section]').forEach(b=>b.classList.toggle('active',b.dataset.section===section));$('listTitle').childNodes[0].textContent=section==='pinned'?'Important':section==='today'?'Added Today':'My tasks';}
+function filteredTasks(){
+ return tasks.filter(t=>{
+  const f=filter==='all'||(filter==='active'&&!t.done)||(filter==='done'&&t.done);
+  const s=section==='all'||(section==='pinned'&&t.pinned)||(section==='today'&&new Date(t.createdAt).toDateString()===new Date().toDateString());
+  return f&&s&&(t.title||'').toLowerCase().includes(searchTerm);
+ });
+}
+
+function getDailyMessage(date){
+ const month=date.getMonth()+1, day=date.getDate(), year=date.getFullYear();
+ // Festival messages for widely observed fixed-date occasions, plus major 2026 festival dates.
+ const festivals={
+  '1-1':'Happy New Year! A fresh start and new goals await. 🎉',
+  '1-26':'Happy Republic Day! Make today count. 🇮🇳',
+  '8-15':'Happy Independence Day! Keep moving forward with pride. 🇮🇳',
+  '10-2':'Happy Gandhi Jayanti! Small steps can make a big difference. ✨',
+  '12-25':'Merry Christmas! Wishing you a joyful and peaceful day. 🎄'
+ };
+ if(year===2026){
+  Object.assign(festivals,{
+   '3-4':'Happy Holi! Add a little color to your goals today. 🌈',
+   '8-28':'Happy Raksha Bandhan! Make time for what matters. 🧡',
+   '9-4':'Happy Janmashtami! Keep your focus and positivity strong. 🪷',
+   '10-20':'Happy Dussehra! Celebrate new beginnings and good habits. ✨',
+   '11-8':'Happy Diwali! Let your goals shine bright. 🪔'
+  });
+ }
+ const festival=festivals[`${month}-${day}`];
+ if(festival)return festival;
+ const messages=[
+  'A little progress each day adds up.',
+  'Make today a small step toward something big.',
+  'Stay consistent. Your effort is building something.',
+  'One task at a time—keep moving forward.',
+  'You’ve got this. Turn today’s plans into progress.',
+  'Take a breath, find your focus, and make it count.',
+  'A fresh day, a fresh chance to get things done.'
+ ];
+ return messages[date.getDay()];
+}
+
+function render(){
+ const total=tasks.length,done=tasks.filter(t=>t.done).length,pct=total?Math.round(done/total*100):0;
+ $('progressNum').textContent=pct+'%';$('progressFill').style.width=pct+'%';
+ $('progressText').textContent=total?(done===total?'Everything is done. Amazing work!':`${done} of ${total} tasks completed. Keep it going!`):"You're just getting started. Let's do this!";
+ const now=new Date();
+ $('todayLabel').textContent=new Intl.DateTimeFormat(undefined,{weekday:'long',month:'long',day:'numeric'}).format(now).toUpperCase();
+ $('dailyMessage').textContent=getDailyMessage(now);
+ const visible=filteredTasks();$('taskCount').textContent=`(${visible.length})`;
+ document.querySelectorAll('[data-filter]').forEach(b=>b.classList.toggle('active',b.dataset.filter===filter));
+ tasksElReplace(visible);
+}
+function tasksElReplace(visible){
+ const root=$('tasks');root.replaceChildren();
+ if(!visible.length){const empty=document.createElement('div');empty.className='empty';const icon=document.createElement('div');icon.className='empty-icon';icon.textContent=filter==='done'?'✨':'📝';const msg=document.createElement('div');msg.textContent=searchTerm?'No matching tasks found.':filter==='done'?'No completed tasks yet.':'Nothing here yet. Add your first task!';empty.append(icon,msg);root.append(empty);return}
+ visible.forEach(task=>{
+  const row=document.createElement('div');row.className='task'+(task.done?' done':'');
+  const check=document.createElement('button');check.className='check';check.textContent=task.done?'✓':'';check.setAttribute('aria-label',task.done?'Mark active':'Complete task');
+  check.addEventListener('click',()=>{task.done=!task.done;task.completedAt=task.done?Date.now():null;save();render()});
+  const title=document.createElement('div');title.className='task-title';title.textContent=task.title;
+  const meta=document.createElement('div');meta.className='meta';
+  const added=document.createElement('span');added.textContent='Added: '+dateTime(task.createdAt);meta.append(added);
+  if(task.done&&task.completedAt){const completed=document.createElement('span');completed.className='completed';completed.textContent='Done: '+dateTime(task.completedAt);meta.append(completed)}
+  const actions=document.createElement('div');actions.className='task-actions';
+  const pin=document.createElement('button');pin.className='icon-btn'+(task.pinned?' pinned':'');pin.textContent=task.pinned?'★':'☆';pin.title=task.pinned?'Unmark important':'Mark important';pin.setAttribute('aria-label',pin.title);pin.addEventListener('click',()=>{task.pinned=!task.pinned;save();render()});
+  const del=document.createElement('button');del.className='icon-btn delete';del.innerHTML='<svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 6h18"/><path d="M8 6V4h8v2"/><path d="m19 6-1 14H6L5 6"/><path d="M10 11v5M14 11v5"/></svg>';del.title='Delete task';del.setAttribute('aria-label','Delete task');del.addEventListener('click',()=>openDeleteDialog(task.id));
+  actions.append(pin,del);row.append(check,title,meta,actions);root.append(row);
+ });
+}
+$('loginForm').addEventListener('submit',e=>{e.preventDefault();const value=$('email').value.trim();if(value)enter(value)});
+$('logout').addEventListener('click',logout);
+$('avatar').addEventListener('click',()=>{const menu=$('accountMenu');const opened=menu.classList.toggle('open');$('avatar').setAttribute('aria-expanded',String(opened))});
+document.addEventListener('click',e=>{const menu=$('accountMenu');if(menu&&!menu.contains(e.target)){menu.classList.remove('open');$('avatar').setAttribute('aria-expanded','false')}});
+$('cancelDelete').addEventListener('click',closeDeleteDialog);
+$('confirmDelete').addEventListener('click',confirmTaskDelete);
+$('deleteDialog').addEventListener('click',e=>{if(e.target===$('deleteDialog'))closeDeleteDialog()});
+document.addEventListener('keydown',e=>{if(e.key==='Escape'&&!$('deleteDialog').classList.contains('hidden'))closeDeleteDialog()});
+$('newTaskBtn').addEventListener('click',()=>{$('taskForm').hidden=!$('taskForm').hidden;if(!$('taskForm').hidden)$('taskInput').focus()});
+$('taskForm').addEventListener('submit',e=>{e.preventDefault();const title=$('taskInput').value.trim();if(!title)return;tasks.unshift({id:Date.now()+Math.random(),title,done:false,pinned:false,createdAt:Date.now(),completedAt:null});save();$('taskInput').value='';$('taskForm').hidden=true;render()});
+$('searchInput').addEventListener('input',e=>{searchTerm=e.target.value.trim().toLowerCase();render()});
+document.querySelectorAll('[data-filter]').forEach(b=>b.addEventListener('click',()=>{filter=b.dataset.filter;render()}));
+document.querySelectorAll('[data-section]').forEach(b=>b.addEventListener('click',()=>{section=b.dataset.section;filter='all';setActiveNav();render()}));
+try{const saved=localStorage.getItem('taskly_v2_current');if(saved)enter(saved)}catch{}
+</script>
+</body>
+</html>
